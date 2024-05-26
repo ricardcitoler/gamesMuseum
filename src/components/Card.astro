@@ -1,0 +1,114 @@
+---
+interface Props {
+  game: Game;
+}
+
+const { game } = Astro.props;
+
+const handleGoSteam = (game: Game) => {
+  window.open(`https://store.steampowered.com/app/${game.appid}/`, "_blank");
+};
+---
+
+<div class="card-container hover:cursor-pointer">
+  <div class="flip-card">
+    <div class="flip-card-inner">
+      <div
+        class="flip-card-front flex flex-col justify-center items-center rounded-lg w-full h-full p-4"
+      >
+        <img
+          src={game.img_icon_url}
+          alt={game.name}
+          class="w-full object-cover h-auto rounded-lg"
+        />
+      </div>
+      <div
+        class="flip-card-back flex flex-col items-center justify-center bg-gray-700 text-white p-4 rounded-lg w-full h-full"
+      >
+        <p class="mt-2 text-white">
+          Name: {game.name}
+        </p>
+        <p>Play time: {(game.playtime_forever / 60).toFixed(1)}h</p>
+        <!-- @ts-ignore -->
+        <button
+          onClick={() => handleGoSteam(game)}
+          class="mt-2 px-4 py-2 bg-blue-500 rounded">Action</button
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const cardContainers =
+      document.querySelectorAll<HTMLElement>(".card-container");
+    cardContainers.forEach((container) => {
+      container.addEventListener("click", () => {
+        const innerCard =
+          container.querySelector<HTMLElement>(".flip-card-inner");
+        if (innerCard) {
+          innerCard.style.transform =
+            innerCard.style.transform === "rotateY(180deg)"
+              ? "rotateY(0deg)"
+              : "rotateY(180deg)";
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .card-container {
+    perspective: 1000px; /* Mantén esto para el efecto 3D */
+  }
+
+  .flip-card {
+    min-width: 300px; /* Ajusta el tamaño según sea necesario */
+    min-height: 200px; /* Altura mínima */
+    perspective: 1000px;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    min-height: 200px; /* Altura mínima */
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    width: 100%;
+    min-height: 200px; /* Altura mínima */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Asegura la distribución uniforme del contenido */
+    padding: 1rem; /* Añade el padding deseado */
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+  }
+
+  .flip-card-front {
+    background-color: #1f2937;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .flip-card-back {
+    background-color: #1f2937;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem; /* Añade el padding deseado */
+  }
+
+  .flip-card-front p {
+    margin-top: auto; /* Empuja el texto hacia abajo para mantener el padding superior */
+  }
+</style>

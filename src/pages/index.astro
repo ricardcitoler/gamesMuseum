@@ -1,0 +1,146 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Card from "../components/Card.astro";
+import { getSteamOwnedGames } from "../pages/api/games.ts";
+import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
+
+// Llamar a la función del servicio para obtener los datos de los juegos
+let steamGamesData: Game[] = [];
+try {
+  steamGamesData = await getSteamOwnedGames();
+  console.log(steamGamesData);
+} catch (error) {}
+---
+
+<Layout title="Welcome to Astro.">
+  <main
+    class="flex flex-col items-center justify-center mx-auto p-4 w-full max-w-screen-xl text-white text-xl leading-relaxed"
+  >
+    <h1 class="text-6xl font-bold leading-none text-center mb-4">
+      My <span
+        class="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent"
+      >
+        Games</span
+      >
+    </h1>
+    <div
+      class="relative flex text-4xl justify-center my-10 tab-buttons-container"
+    >
+      <div class="space-x-5">
+        <button class="tab-button active" data-tab="tab-1">Todos</button>
+        <button class="tab-button" data-tab="tab-2">Steam</button>
+        <button class="tab-button" data-tab="tab-3">PlayStation</button>
+        <button class="tab-button" data-tab="tab-4">Nintendo</button>
+      </div>
+
+      <div class="tab-indicator"></div>
+    </div>
+    <div class="w-full">
+      <div
+        class="tab-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        id="tab-1"
+      >
+        {steamGamesData.map((game) => <Card game={game} />)}
+      </div>
+
+      <div
+        class="tab-content hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        id="tab-2"
+      >
+        {steamGamesData.map((game) => <Card game={game} />)}
+      </div>
+
+      <div
+        class="tab-content hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        id="tab-3"
+      >
+        {steamGamesData.map((game) => <Card game={game} />)}
+      </div>
+
+      <div
+        class="tab-content hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        id="tab-4"
+      >
+        {steamGamesData.map((game) => <Card game={game} />)}
+      </div>
+    </div>
+  </main>
+
+  <style>
+    .tab-buttons-container {
+      position: relative;
+    }
+
+    .tab-button {
+      position: relative;
+      padding-bottom: 8px; /* Espacio para el borde */
+    }
+
+    .tab-indicator {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: white;
+      transition:
+        transform 0.3s ease-out,
+        width 0.3s ease-out;
+    }
+
+    .tab-button.active ~ .tab-indicator {
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tabButtons = document.querySelectorAll<HTMLElement>(".tab-button");
+      const tabContents =
+        document.querySelectorAll<HTMLElement>(".tab-content");
+      const tabIndicator =
+        document.querySelector<HTMLElement>(".tab-indicator");
+
+      function updateIndicator() {
+        if (!tabIndicator) return;
+
+        const activeButton =
+          document.querySelector<HTMLElement>(".tab-button.active");
+        if (activeButton) {
+          const buttonRect = activeButton.getBoundingClientRect();
+          const containerRect =
+            activeButton.parentElement?.getBoundingClientRect();
+          if (containerRect) {
+            tabIndicator.style.width = `${buttonRect.width}px`;
+            tabIndicator.style.transform = `translateX(${buttonRect.left - containerRect.left}px)`;
+          }
+        }
+      }
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const tabId = button.getAttribute("data-tab");
+
+          if (tabId) {
+            tabButtons.forEach((btn) => {
+              btn.classList.remove("active");
+            });
+            tabContents.forEach((content) => content.classList.add("hidden"));
+
+            button.classList.add("active");
+            updateIndicator();
+
+            const tabContent = document.getElementById(tabId);
+            if (tabContent) {
+              tabContent.classList.remove("hidden");
+            }
+          }
+        });
+      });
+
+      // Inicializa el indicador en la posición del botón activo al cargar la página
+      updateIndicator();
+      window.addEventListener("resize", updateIndicator);
+    });
+  </script>
+</Layout>

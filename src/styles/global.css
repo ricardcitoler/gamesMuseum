@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.card-container {
+    perspective: 1000px; /* Mantén esto para el efecto 3D */
+  }
+  
+  .flip-card {
+    min-width: 300px; /* Ajusta el tamaño según sea necesario */
+    min-height: 200px; /* Altura mínima */
+    perspective: 1000px;
+  }
+  
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    min-height: 200px; /* Altura mínima */
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+  }
+  
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    width: 100%;
+    min-height: 200px; /* Altura mínima */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Asegura la distribución uniforme del contenido */
+    padding: 1rem; /* Añade el padding deseado */
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+  }
+  
+  .flip-card-front {
+    background-color: #1f2937;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .flip-card-back {
+    background-color: #1f2937;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem; /* Añade el padding deseado */
+  }
+  
+  .flip-card-front p {
+    margin-top: auto; /* Empuja el texto hacia abajo para mantener el padding superior */
+  }
+  
